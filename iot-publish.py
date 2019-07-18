@@ -155,5 +155,5 @@ class MyThing(MQTTLocust):
     createTemplateAndDevice()
 
     task_set = IotDevice
-    min_wait = 10000 # 10 segs
-    max_wait = 50000 # 50 segs
+    min_wait = 2000 # 1 segs
+    max_wait = 4000 # 3 segs
