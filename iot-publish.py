@@ -69,9 +69,9 @@ class IotDevice(TaskSet):
             
 
     def on_stop(self):
-        if self.client.is_connected:
-            print ("Client is connected so let's disconnect the tasks")
-            self.client.disconnecting()
+        # if self.client.is_connected:
+        #     print ("Client is connected so let's disconnect the tasks")
+        #     self.client.disconnecting()
         pass
 
     @task
@@ -92,19 +92,26 @@ class IotDevice(TaskSet):
 
         def on_start(self):
             print("Starting SubTask....")
-            self.client.connecting(host = data['mqtt_host'], port =  data['mqtt_port'])
-            self.loop_until_connected()
+            # self.client.connecting(host = data['mqtt_host'], port =  data['mqtt_port'])
+            # self.loop_until_connected()
 
 
         @task
         def publish(self):
             #print ("publish task called")
-            if not self.client.is_connected:
-                print ("Connection is down. ")
-                self.client.reconnecting(host = data['mqtt_host'], port =  data['mqtt_port'])
-                self.loop_until_connected()
-                #self.interrupt()
-                return False
+
+
+            # if not self.client.is_connected:
+            #     print ("Connection is down. ")
+            #     self.client.reconnecting(host = data['mqtt_host'], port =  data['mqtt_port'])
+            #     self.loop_until_connected()
+            #     #self.interrupt()
+            #     return False
+
+            self.client.connecting(host = data['mqtt_host'], port =  data['mqtt_port'])
+            self.loop_until_connected()
+
+
             #device_id = random.choice(self.devices_available)
             #device_id = self.parent.devices_available[0]
             device_id = data['device_id']
@@ -115,6 +122,10 @@ class IotDevice(TaskSet):
                 qos=0,
                 name=topic,
                 timeout=publish_timeout)
+
+            if self.client.is_connected:
+                print ("Client is connected so let's disconnect")
+                self.client.disconnecting()    
 
 
         def payload(self):
@@ -155,5 +166,5 @@ class MyThing(MQTTLocust):
     createTemplateAndDevice()
 
     task_set = IotDevice
-    min_wait = 2000 # 1 segs
-    max_wait = 4000 # 3 segs
+    min_wait = 10000 # 1 segs
+    max_wait = 10000 # 3 segs
